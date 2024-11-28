@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .gallery-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            max-width: 80%;
+            max-height: 80%;
+            position: relative;
+        }
+        .modal img {
+            width: 100%;
+            height: auto;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #fff;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 30px;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+        .prev {
+            left: 10px;
+        }
+        .next {
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container">
+        <h1>Image Gallery</h1>
+        <div class="gallery">
+            <img src="https://i.pinimg.com/736x/fd/f5/5b/fdf55b32e2b3cad2b5ae6bbe01c2d2c7.jpg" alt="Image 1">
+            <img src="https://wallpaper-house.com/data/out/10/wallpaper2you_375104.jpg" alt="Image 2">
+            <img src="https://st5.depositphotos.com/1008660/67313/i/450/depositphotos_673131316-stock-photo-red-fox-vulpes-vulpes-forest.jpg" alt="Image 3">
+            <img src="https://archive.smashing.media/assets/344dbf88-fdf9-42bb-adb4-46f01eedd629/1c7f013d-5a1d-452a-80d7-b888e2c36f94/w18.jpg" alt="Image 4">
+            <img src="https://wallup.net/wp-content/uploads/2016/01/214297-nature-animals-wildlife-macaws-748x421.jpg" alt="Image 5">
+            <img src="https://petzpark.com.au/cdn/shop/articles/10_Signs_That_Your_Dog_Needs_Probiotics_900x.jpg?v=1676493446" alt="Image 6">
+            <img src="https://t3.ftcdn.net/jpg/10/18/41/62/360_F_1018416228_odxImiC88WqzHXU4mONZ5i0U4QJkmsyc.jpg" alt="Image 7">
+            <img src="https://img.freepik.com/premium-photo/cute-cat-garden_1234738-134042.jpg" alt="Image 8">
+            <img src="https://t3.ftcdn.net/jpg/07/22/91/16/360_F_722911683_ndMK0zBIi3AbsFa4TY1kBwHcQPXQdPlz.jpg" alt="Image 9">
+            <img src="https://static.boredpanda.com/blog/wp-content/uploads/2019/02/Cuteness-Overload-These-30-Wildlife-Photos-by-Austrian-Photographer-will-melt-your-heart-5c66089ce23ff__880.jpg" alt="Image 10">
+            <img src="https://wallpapercave.com/wp/wp6017943.jpg" alt="Image 11">
+            <img src="https://i.pinimg.com/736x/f3/08/0f/f3080f58df149962a7530aa42c0fb753.jpg" alt="Image 12">
+            <img src="https://images.theconversation.com/files/633480/original/file-20241121-15-a5piur.jpg?ixlib=rb-4.1.0&rect=17%2C8%2C2890%2C1617&q=20&auto=format&w=320&fit=clip&dpr=2&usm=12&cs=strip" alt="Image 13">
+            <img src="https://media.nature.com/w767/magazine-assets/d41586-024-01289-w/d41586-024-01289-w_27042366.jpg" alt="Image 14">
+            <img src="https://thumbs.dreamstime.com/b/panda-eating-bamboo-wildlife-scene-china-nature-portrait-giant-panda-feeding-bamboo-tree-forest-habitat-cute-black-88565919.jpg" alt="Image 15">
+
+
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-btn">&times;</span>
+            <button class="prev" id="prev-btn">&#10094;</button>
+            <img src="" alt="Modal Image" id="modal-img">
+            <button class="next" id="next-btn">&#10095;</button>
+        </div>
+    </div>
+
+    <script>
+        const galleryImages = document.querySelectorAll('.gallery img');
+        const modal = document.getElementById('modal');
+        const modalImg = document.getElementById('modal-img');
+        const closeBtn = document.getElementById('close-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        let currentImageIndex = 0;
+
+        galleryImages.forEach((img, index) => {
+            img.addEventListener('click', () => {
+                currentImageIndex = index;
+                showModal();
+            });
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+            showModal();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+            showModal();
+        });
+
+        function showModal() {
+            const imgSrc = galleryImages[currentImageIndex].src;
+            modalImg.src = imgSrc;
+            modal.style.display = 'flex';
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
